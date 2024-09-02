@@ -21,11 +21,16 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 
-const server = app.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
 });
+
+console.log(process.env);
 
 mongoose
   .connect(DATABASE_URL)
   .then(() => console.log("Database connection successful"))
-  .catch((error) => console.log(error.message));
+  .catch((error) => {
+    console.error(error.message);
+    process.exit(1);
+  });
