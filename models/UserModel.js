@@ -1,21 +1,26 @@
 import { genSalt } from "bcrypt";
 import mongoose from "mongoose";
+import { emailRegex } from "../constants/user-constants";
 
-const UserSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: [true, "This field is required"],
-    unique: true,
+const UserSchema = new mongoose.Schema(
+  {
+    userName: {
+      type: String,
+      required: [true, "This field is required"],
+    },
+    email: {
+      type: String,
+      match: emailRegex,
+      required: [true, "This field is required"],
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: [true, "This field is required"],
+    },
   },
-  password: {
-    type: String,
-    required: [true, "This field is required"],
-  },
-  userName: {
-    type: String,
-    required: [true, "This field is required"],
-  },
-});
+  { versionKey: false, timestamps: true }
+);
 
 UserSchema.pre("save", async function (next) {
   const salt = await genSalt();
@@ -23,6 +28,6 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-const User = mongoose.model("Users", userSchema);
+const User = mongoose.model("user", userSchema);
 
 export default User;
