@@ -1,6 +1,6 @@
 import User from "../models/UserModel";
 
-export const signup = (req, res, next) => {
+const signup = (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -13,4 +13,8 @@ export const signup = (req, res, next) => {
     console.log(error);
     return res.status(500).send("Internal Server Error");
   }
+};
+
+export default {
+  signup,
 };
