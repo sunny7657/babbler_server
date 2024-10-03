@@ -1,20 +1,25 @@
-import User from "../models/UserModel";
+import * as authServices from "../services/authServices";
 
-const signup = (req, res) => {
-  try {
-    const { email, password } = req.body;
+import ctrlWrapper from "../decorators/ctrlWrapper";
 
-    if (!email || !password) {
-      return res.status(400).send("Email and password are required");
-    }
+import httpError from "../helpers/HttpError";
 
-    const user = User.create({ email, password });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send("Internal Server Error");
+const signup = async (req, res) => {
+  const { email } = req.body;
+  const user = await authServices.findUser({ email });
+
+  if (user) {
+    throw httpError(409, "Email is already in use");
   }
+
+  const newUser = await authServices.signup(req.body);
+
+  res.status(201).json({
+    username: newUser.username,
+    email: newUser.email,
+  });
 };
 
 export default {
-  signup,
+  signup: ctrlWrapper(signup),
 };
